@@ -349,7 +349,6 @@ RUN \
         --enable-libkvazaar \
         --enable-libaom --extra-libs=-lpthread \
         --enable-postproc \
-        --enable-small \
         --enable-version3 \
         --extra-cflags="-I${PREFIX}/include" \
         --extra-ldflags="-L${PREFIX}/lib" \
