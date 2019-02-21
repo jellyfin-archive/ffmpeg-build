@@ -22,7 +22,6 @@ ARG        PREFIX=/opt/ffmpeg
 ARG        MAKEFLAGS="-j2"
 
 ENV         FFMPEG_VERSION=4.0.3     \
-            FDKAAC_VERSION=0.1.5      \
             LAME_VERSION=3.99.5       \
             LIBASS_VERSION=0.13.7     \
             OGG_VERSION=1.3.2         \
@@ -32,8 +31,8 @@ ENV         FFMPEG_VERSION=4.0.3     \
             THEORA_VERSION=1.1.1      \
             VORBIS_VERSION=1.3.5      \
             VPX_VERSION=1.8.0         \
-            X264_VERSION=20170226-2245-stable \
-            X265_VERSION=2.3          \
+            X264_VERSION=20190219-2245-stable \
+            X265_VERSION=3.0          \
             XVID_VERSION=1.3.4        \
             FREETYPE_VERSION=2.5.5    \
             FRIBIDI_VERSION=0.19.7    \
@@ -41,6 +40,7 @@ ENV         FFMPEG_VERSION=4.0.3     \
             LIBVIDSTAB_VERSION=1.1.0  \
             KVAZAAR_VERSION=1.2.0     \
             AOM_VERSION=v1.0.0        \
+            NVCODECHEADERS_VERSION=n8.2.15.7 \
             SRC=/usr/local
 
 ARG         OGG_SHA256SUM="e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692  libogg-1.3.2.tar.gz"
@@ -196,18 +196,6 @@ RUN \
         make && \
         make install && \
         rm -rf ${DIR}
-### fdk-aac https://github.com/mstorsjo/fdk-aac
-RUN \
-        DIR=/tmp/fdk-aac && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        autoreconf -fiv && \
-        ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
 ## openjpeg https://github.com/uclouvain/openjpeg
 RUN \
         DIR=/tmp/openjpeg && \
@@ -255,7 +243,7 @@ RUN  \
         sed -i 's/^SUBDIRS =.*/SUBDIRS=gen.tab charset lib/' Makefile.am && \
         ./bootstrap --no-config && \
         ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-        make -j 1 && \
+        make -j1 && \
         make install && \
         rm -rf ${DIR}
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
@@ -307,6 +295,13 @@ RUN \
         make install ; \
         rm -rf ${DIR}
 
+RUN \
+	DIR=/tmp/ffnvcodec && \
+        git clone --branch ${NVCODECHEADERS_VERSION} --depth 1 https://git.videolan.org/git/ffmpeg/nv-codec-headers.git ${DIR} ; \
+        cd ${DIR} ; \        
+        make install PREFEX=${PREFIX} ; \
+        rm -rf ${DIR}
+
 ## ffmpeg https://ffmpeg.org/
 RUN  \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
@@ -343,12 +338,11 @@ RUN \
         --enable-libx265 \
         --enable-libxvid \
         --enable-libx264 \
-        --enable-nonfree \
-        --enable-openssl \
-        --enable-libfdk_aac \
         --enable-libkvazaar \
         --enable-libaom --extra-libs=-lpthread \
         --enable-postproc \
+        --enable-cuvid \
+        --enable-nvenc \
         --enable-version3 \
         --extra-cflags="-I${PREFIX}/include" \
         --extra-ldflags="-L${PREFIX}/lib" \
