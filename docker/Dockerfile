@@ -70,7 +70,7 @@ RUN      buildDeps="autoconf \
                     perl \
                     pkg-config \
                     python \
-                    libssl-dev \
+                    libgnutls28-dev \
                     yasm \
                     libva-dev \
                     zlib1g-dev" && \
@@ -325,6 +325,7 @@ RUN \
         --enable-avresample \
         --enable-libopencore-amrnb \
         --enable-libopencore-amrwb \
+        --enable-gnutls \
         --enable-gpl \
         --enable-libass \
         --enable-libfreetype \
