@@ -284,7 +284,7 @@ RUN \
         rm -rf ${DIR}
 
 RUN \
-	DIR=/tmp/aom && \
+    DIR=/tmp/aom && \
         git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom ${DIR} ; \
         cd ${DIR} ; \
         rm -rf CMakeCache.txt CMakeFiles ; \
@@ -296,9 +296,9 @@ RUN \
         rm -rf ${DIR}
 
 RUN \
-	DIR=/tmp/ffnvcodec && \
+    DIR=/tmp/ffnvcodec && \
         git clone --branch ${NVCODECHEADERS_VERSION} --depth 1 https://git.videolan.org/git/ffmpeg/nv-codec-headers.git ${DIR} ; \
-        cd ${DIR} ; \        
+        cd ${DIR} ; \
         make install PREFEX=${PREFIX} ; \
         rm -rf ${DIR}
 
@@ -310,8 +310,8 @@ RUN  \
 
 RUN \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
-	curl -sLO https://github.com/FFmpeg/FFmpeg/commit/b69ea742ab23ad74b2ae2772764743642212a139.patch && \
-	git apply b69ea742ab23ad74b2ae2772764743642212a139.patch
+    curl -sLO https://github.com/FFmpeg/FFmpeg/commit/b69ea742ab23ad74b2ae2772764743642212a139.patch && \
+    git apply b69ea742ab23ad74b2ae2772764743642212a139.patch
 
 
 RUN \
@@ -374,6 +374,6 @@ ENV         LD_LIBRARY_PATH=/usr/local/lib
 COPY --from=build /usr/local /usr/local/
 
 RUN \
-	apt-get update -y && \
-	apt-get install -y --no-install-recommends libva-drm2 libva2 i965-va-driver && \
-	rm -rf /var/lib/apt/lists/*
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends libva-drm2 libva2 i965-va-driver && \
+    rm -rf /var/lib/apt/lists/*
