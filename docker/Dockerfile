@@ -365,7 +365,7 @@ RUN \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
 FROM        base AS release
-MAINTAINER  Julien Rottenberg <julien@rottenberg.info>
+LABEL maintainer="team@jellyfin.org"
 
 CMD         ["--help"]
 ENTRYPOINT  ["ffmpeg"]
