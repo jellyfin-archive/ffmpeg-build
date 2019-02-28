@@ -2,7 +2,7 @@
 #
 # From https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 #
-# https://hub.docker.com/r/jrottenberg/ffmpeg/
+# https://hub.docker.com/r/jellyfin/ffmpeg/
 #
 #
 FROM        ubuntu:18.04 AS base
@@ -377,6 +377,3 @@ RUN \
 	apt-get update -y && \
 	apt-get install -y --no-install-recommends libva-drm2 libva2 i965-va-driver && \
 	rm -rf /var/lib/apt/lists/*
-
-# Let's make sure the app built correctly
-# Convenient to verify on https://hub.docker.com/r/jrottenberg/ffmpeg/builds/ console output
