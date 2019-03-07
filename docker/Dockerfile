@@ -2,7 +2,7 @@
 #
 # From https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 #
-# https://hub.docker.com/r/jrottenberg/ffmpeg/
+# https://hub.docker.com/r/jellyfin/ffmpeg/
 #
 #
 FROM        ubuntu:18.04 AS base
@@ -20,37 +20,45 @@ ARG        PKG_CONFIG_PATH=/opt/ffmpeg/lib/pkgconfig
 ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG        PREFIX=/opt/ffmpeg
 ARG        MAKEFLAGS="-j2"
+ARG        SRC=/usr/local
 
-ENV         FFMPEG_VERSION=4.0.3     \
-            LAME_VERSION=3.99.5       \
-            LIBASS_VERSION=0.13.7     \
-            OGG_VERSION=1.3.2         \
-            OPENCOREAMR_VERSION=0.1.5 \
-            OPUS_VERSION=1.2          \
-            OPENJPEG_VERSION=2.1.2    \
-            THEORA_VERSION=1.1.1      \
-            VORBIS_VERSION=1.3.5      \
-            VPX_VERSION=1.8.0         \
-            X264_VERSION=20190219-2245-stable \
-            X265_VERSION=3.0          \
-            XVID_VERSION=1.3.4        \
-            FREETYPE_VERSION=2.5.5    \
-            FRIBIDI_VERSION=0.19.7    \
-            FONTCONFIG_VERSION=2.12.4 \
-            LIBVIDSTAB_VERSION=1.1.0  \
-            KVAZAAR_VERSION=1.2.0     \
-            AOM_VERSION=v1.0.0        \
-            NVCODECHEADERS_VERSION=n8.2.15.7 \
-            SRC=/usr/local
+ARG         FFMPEG_VERSION=4.0.3
+ARG         LAME_VERSION=3.99.5
+ARG         OPENCOREAMR_VERSION=0.1.5
+ARG         OPENJPEG_VERSION=2.1.2
+ARG         VPX_VERSION=1.8.0
+ARG         X264_VERSION=20190219-2245-stable
+ARG         X265_VERSION=3.0
+ARG         FONTCONFIG_VERSION=2.12.4
+ARG         KVAZAAR_VERSION=1.2.0
+ARG         AOM_VERSION=v1.0.0
+ARG         NVCODECHEADERS_VERSION=n8.2.15.7
 
+ARG         OGG_VERSION=1.3.2
 ARG         OGG_SHA256SUM="e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692  libogg-1.3.2.tar.gz"
+
+ARG         OPUS_VERSION=1.2
 ARG         OPUS_SHA256SUM="77db45a87b51578fbc49555ef1b10926179861d854eb2613207dc79d9ec0a9a9  opus-1.2.tar.gz"
+
+ARG         VORBIS_VERSION=1.3.5
 ARG         VORBIS_SHA256SUM="6efbcecdd3e5dfbf090341b485da9d176eb250d893e3eb378c428a2db38301ce  libvorbis-1.3.5.tar.gz"
+
+ARG         THEORA_VERSION=1.1.1
 ARG         THEORA_SHA256SUM="40952956c47811928d1e7922cda3bc1f427eb75680c3c37249c91e949054916b  libtheora-1.1.1.tar.gz"
+
+ARG         XVID_VERSION=1.3.4
 ARG         XVID_SHA256SUM="4e9fd62728885855bc5007fe1be58df42e5e274497591fec37249e1052ae316f  xvidcore-1.3.4.tar.gz"
+
+ARG         FREETYPE_VERSION=2.5.5
 ARG         FREETYPE_SHA256SUM="5d03dd76c2171a7601e9ce10551d52d4471cf92cd205948e60289251daddffa8  freetype-2.5.5.tar.gz"
+
+ARG         LIBVIDSTAB_VERSION=1.1.0
 ARG         LIBVIDSTAB_SHA256SUM="14d2a053e56edad4f397be0cb3ef8eb1ec3150404ce99a426c4eb641861dc0bb  v1.1.0.tar.gz"
+
+ARG         LIBASS_VERSION=0.13.7
 ARG         LIBASS_SHA256SUM="8fadf294bf701300d4605e6f1d92929304187fca4b8d8a47889315526adbafd7  0.13.7.tar.gz"
+
+ARG         FRIBIDI_VERSION=0.19.7
 ARG         FRIBIDI_SHA256SUM="3fc96fa9473bd31dcb5500bdf1aa78b337ba13eb8c301e7c28923fea982453a8  0.19.7.tar.gz"
 
 
@@ -284,7 +292,7 @@ RUN \
         rm -rf ${DIR}
 
 RUN \
-	DIR=/tmp/aom && \
+    DIR=/tmp/aom && \
         git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom ${DIR} ; \
         cd ${DIR} ; \
         rm -rf CMakeCache.txt CMakeFiles ; \
@@ -296,9 +304,9 @@ RUN \
         rm -rf ${DIR}
 
 RUN \
-	DIR=/tmp/ffnvcodec && \
+    DIR=/tmp/ffnvcodec && \
         git clone --branch ${NVCODECHEADERS_VERSION} --depth 1 https://git.videolan.org/git/ffmpeg/nv-codec-headers.git ${DIR} ; \
-        cd ${DIR} ; \        
+        cd ${DIR} ; \
         make install PREFEX=${PREFIX} ; \
         rm -rf ${DIR}
 
@@ -310,8 +318,8 @@ RUN  \
 
 RUN \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
-	curl -sLO https://github.com/FFmpeg/FFmpeg/commit/b69ea742ab23ad74b2ae2772764743642212a139.patch && \
-	git apply b69ea742ab23ad74b2ae2772764743642212a139.patch
+    curl -sLO https://github.com/FFmpeg/FFmpeg/commit/b69ea742ab23ad74b2ae2772764743642212a139.patch && \
+    git apply b69ea742ab23ad74b2ae2772764743642212a139.patch
 
 
 RUN \
@@ -365,7 +373,7 @@ RUN \
         LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf
 
 FROM        base AS release
-MAINTAINER  Julien Rottenberg <julien@rottenberg.info>
+LABEL maintainer="team@jellyfin.org"
 
 CMD         ["--help"]
 ENTRYPOINT  ["ffmpeg"]
@@ -374,9 +382,6 @@ ENV         LD_LIBRARY_PATH=/usr/local/lib
 COPY --from=build /usr/local /usr/local/
 
 RUN \
-	apt-get update -y && \
-	apt-get install -y --no-install-recommends libva-drm2 libva2 i965-va-driver && \
-	rm -rf /var/lib/apt/lists/*
-
-# Let's make sure the app built correctly
-# Convenient to verify on https://hub.docker.com/r/jrottenberg/ffmpeg/builds/ console output
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends libva-drm2 libva2 i965-va-driver && \
+    rm -rf /var/lib/apt/lists/*
